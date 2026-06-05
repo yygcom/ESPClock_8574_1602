@@ -78,5 +78,8 @@ void loop() {
 2. 在 Arduino IDE 中选择：`项目` -> `包含库` -> `添加 .ZIP 库`。
 3. 或者直接将源码克隆到你的 `Documents/Arduino/libraries` 目录下。
 
+## 在PIO中使用
+[在PIO中使用.md](在PIO中使用.md)
+
 ## 许可证
 [MIT](LICENSE)
