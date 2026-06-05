@@ -24,17 +24,18 @@ bool ESPClock_8574_1602::syncTimeAndOffline(const char* ssid, const char* passwo
         _lcd.print("Connecting WiFi");
     }
 
-    // ==========================================
-    // 🎯 仅针对带有 WiFi 缺陷的 SuperMini 专属硬件进行修复
-    // ==========================================
-    #if defined(ESP32C3_SUPERMINI_BUGGY_WIFI)
-        WiFi.setTxPower(WIFI_POWER_15dBm); 
-    #endif
-    // ==========================================
-    
     WiFi.begin(ssid, password);
     int retry = 0;
     while (WiFi.status() != WL_CONNECTED && retry < 40) {
+        // ==========================================
+        // 🚀 在等待循环中动态压低功率，应对瞬时塌陷
+        // ==========================================
+        #if defined(ESP32C3_SUPERMINI_BUGGY_WIFI)
+            if (retry == 2)  WiFi.setTxPower(WIFI_POWER_15dBm);
+            if (retry == 5)  WiFi.setTxPower(WIFI_POWER_8_5dBm);  // 逐步压到极限
+            if (retry == 10) WiFi.setTxPower(WIFI_POWER_5dBm);
+        #endif
+        
         delay(500);
         retry++;
     }
