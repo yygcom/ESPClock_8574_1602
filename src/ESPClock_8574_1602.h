@@ -46,6 +46,10 @@ private:
     LiquidCrystal_I2C _lcd;
     uint8_t _sda, _scl, _addr;
     struct tm _timeinfo;
+
+    // --- 新增：用于增量刷新的状态记录 ---
+    int _lastSec = -1;      // 上一次显示的秒
+    long _lastCounter = -1; // 上一次显示的计数值
 };
 
 
