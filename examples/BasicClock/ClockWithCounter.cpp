@@ -6,14 +6,13 @@ bool isWorking = false; // 状态标志位
 
 void displayTask(void *pvParameters) {
     for (;;) {
-        if (!isWorking) {
-            // 模式1：大字显示日期和时间
-            myClock.updateDisplay();
-        } else {
-            // 模式2：显示时间的同时显示计数器
-            myClock.updateDisplayWithCounter(myCount, "Steps");
-        }
-        vTaskDelay(1000 / portTICK_PERIOD_MS);
+        // 现在的逻辑：50ms 检查一次
+        // 如果计数变了，立即刷第二行
+        // 如果计数没变但秒变了，刷第一行
+        // 如果都没变，函数内部直接返回，不操作 I2C，不卡 CPU
+        myClock.updateDisplayWithCounter(myCount, "Steps");
+        
+        vTaskDelay(50 / portTICK_PERIOD_MS); 
     }
 }
 
