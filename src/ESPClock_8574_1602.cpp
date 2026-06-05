@@ -54,6 +54,9 @@ bool ESPClock_8574_1602::syncTimeAndOffline(const char* ssid, const char* passwo
     return false;
 }
 
+// ---------------------------------------------------------
+// 模式1：标准日期时间模式
+// ---------------------------------------------------------
 void ESPClock_8574_1602::updateDisplay() {
     if (!isLcdConnected()) return; 
     if (!getLocalTime(&_timeinfo)) return;
@@ -69,4 +72,28 @@ void ESPClock_8574_1602::updateDisplay() {
     _lcd.setCursor(0, 1);
     _lcd.print("Time: "); _lcd.print(tBuf);
     _lcd.print("  "); // 解决末尾字母F残留问题
+}
+
+// ---------------------------------------------------------
+// 模式2：复合计数模式
+// ---------------------------------------------------------
+void ESPClock_8574_1602::updateDisplayWithCounter(long counter, const char* label) {
+    if (!isLcdConnected() || !getLocalTime(&_timeinfo)) return;
+
+    char line0[17]; // 第一行缓存
+    char line1[17]; // 第二行缓存
+
+    // 第一行显示完整的月-日 时:分:秒 (共14位)
+    strftime(line0, sizeof(line0), "%m-%d %H:%M:%S", &_timeinfo);
+
+    // 第二行显示自定义标签和数字
+    snprintf(line1, sizeof(line1), "%s: %ld", label, counter);
+
+    _lcd.setCursor(0, 0);
+    _lcd.print(line0);
+    _lcd.print("  "); // 覆盖残影
+
+    _lcd.setCursor(0, 1);
+    _lcd.print(line1);
+    _lcd.print("      "); // 覆盖长数字变短后的残影
 }
