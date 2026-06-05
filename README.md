@@ -81,5 +81,12 @@ void loop() {
 ## 在PIO中使用
 [在PIO中使用.md](在PIO中使用.md)
 
+## C3 super mini BUG
+```
+; 👇 在这里手动注入一个自定义的宏，专门标记这是 SuperMini 硬件缺陷板
+build_flags = 
+    -D ESP32C3_SUPERMINI_BUGGY_WIFI
+```
+
 ## 许可证
 [MIT](LICENSE)
