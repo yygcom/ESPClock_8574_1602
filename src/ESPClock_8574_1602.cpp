@@ -78,22 +78,28 @@ void ESPClock_8574_1602::updateDisplay() {
 // 模式2：复合计数模式
 // ---------------------------------------------------------
 void ESPClock_8574_1602::updateDisplayWithCounter(long counter, const char* label) {
-    if (!isLcdConnected() || !getLocalTime(&_timeinfo)) return;
+    if (!isLcdConnected()) return;
 
-    char line0[17]; // 第一行缓存
-    char line1[17]; // 第二行缓存
+    // 1. 处理时间显示 (每秒仅执行一次 I2C 写入)
+    if (getLocalTime(&_timeinfo)) {
+        if (_timeinfo.tm_sec != _lastSec) { 
+            _lastSec = _timeinfo.tm_sec; // 只有秒变了才刷第一行
+            
+            char line0[17];
+            strftime(line0, sizeof(line0), "%m-%d %H:%M:%S", &_timeinfo);
+            _lcd.setCursor(0, 0);
+            _lcd.print(line0);
+        }
+    }
 
-    // 第一行显示完整的月-日 时:分:秒 (共14位)
-    strftime(line0, sizeof(line0), "%m-%d %H:%M:%S", &_timeinfo);
-
-    // 第二行显示自定义标签和数字
-    snprintf(line1, sizeof(line1), "%s: %ld", label, counter);
-
-    _lcd.setCursor(0, 0);
-    _lcd.print(line0);
-    _lcd.print("  "); // 覆盖残影
-
-    _lcd.setCursor(0, 1);
-    _lcd.print(line1);
-    _lcd.print("      "); // 覆盖长数字变短后的残影
+    // 2. 处理计数显示 (只有计数数值变了才刷第二行)
+    if (counter != _lastCounter) {
+        _lastCounter = counter; // 只有计数变了才刷第二行
+        
+        char line1[17];
+        snprintf(line1, sizeof(line1), "%s: %ld", label, counter);
+        _lcd.setCursor(0, 1);
+        _lcd.print(line1);
+        _lcd.print("      "); // 清除旧数字残留
+    }
 }
