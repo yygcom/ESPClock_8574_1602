@@ -1,0 +1,14 @@
+{
+  "name": "ESPClock_8574_1602",
+  "version": "1.0.0",
+  "description": "NTP Clock for ESP32 with LCD1602. Auto-disconnects WiFi for BT support.",
+  "dependencies": [
+    {
+      "name": "LiquidCrystal_I2C",
+      "owner": "marcoschwartz",
+      "version": "^1.1.4"
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}
